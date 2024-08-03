@@ -12,8 +12,14 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Models
         public string TeacherFname;
         public string TeacherLname;
         public string EmployeeNumber;
-        public string FormattedHireDate;
-        public string FormattedSalary;
+        public DateTime HireDate;
+        public string Salary;
+
+        //parameter-less constructor function
+        public Teacher()
+        {
+
+        }
         
     }
 }

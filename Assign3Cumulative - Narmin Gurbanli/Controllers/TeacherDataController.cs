@@ -42,9 +42,8 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
                     string TeacherLname = ResultSet["teacherlname"].ToString();
                     string EmployeeNumber = ResultSet["employeenumber"].ToString();
                     DateTime HireDate = (DateTime)ResultSet["hiredate"];
-                    string FormattedHireDate = HireDate.ToString("yyyy-MM-dd");
-                    decimal Salary = ResultSet.GetDecimal("salary");
-                    string FormattedSalary = Salary.ToString("00.00");
+                    string Salary = ResultSet["salary"].ToString();
+
 
 
 
@@ -56,8 +55,8 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
                     NewTeacher.TeacherFname = TeacherFname;
                     NewTeacher.TeacherLname = TeacherLname;
                     NewTeacher.EmployeeNumber = EmployeeNumber;
-                    NewTeacher.FormattedHireDate = FormattedHireDate;
-                    NewTeacher.FormattedSalary = FormattedSalary;
+                    NewTeacher.HireDate = HireDate;
+                    NewTeacher.Salary = Salary;
                     
 
 
@@ -86,22 +85,63 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
                 string TeacherLname = ResultSet["teacherlname"].ToString();
                 string EmployeeNumber = ResultSet["employeenumber"].ToString();
                 DateTime HireDate = (DateTime)ResultSet["hiredate"];
-                string FormattedHireDate = HireDate.ToString("yyyy-MM-dd");
-                decimal Salary = ResultSet.GetDecimal("salary");
-                string FormattedSalary = Salary.ToString("00.00");
+                string Salary = ResultSet["salary"].ToString();
+
 
 
                 NewTeacher.TeacherId = TeacherId;
                 NewTeacher.TeacherFname = TeacherFname;
                 NewTeacher.TeacherLname = TeacherLname;
                 NewTeacher.EmployeeNumber = EmployeeNumber;
-                NewTeacher.FormattedHireDate = FormattedHireDate;
-                NewTeacher.FormattedSalary = FormattedSalary;
+                NewTeacher.HireDate = HireDate;
+                NewTeacher.Salary = Salary;
 
             }
 
 
                 return NewTeacher;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">The id of the teacher being deleted</param>
+        /// <example>POST : /api/TeacherData/DeleteTeacher/3</example>
+
+        [HttpPost]
+        
+        public void DeleteTeacher(int id)
+        {
+            MySqlConnection Conn = school.AccessDatabase();
+            Conn.Open();
+            MySqlCommand cmd = Conn.CreateCommand();
+            cmd.CommandText = "Delete from Teachers where teacherid=@id";
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            //dont need to return anything, as it is a void method
+        }
+
+        [HttpPost]
+        public void AddTeacher([FromBody]Teacher NewTeacher)
+        {
+            MySqlConnection Conn = school.AccessDatabase();
+            Conn.Open();
+            MySqlCommand cmd = Conn.CreateCommand();
+            cmd.CommandText = "Insert into teachers (teacherid, teacherfname, teacherlname, employeenumber, hiredate, salary) values (@TeacherId,@TeacherFname,@TeacherLname,@EmployeeNumber,@HireDate,@Salary)";
+            cmd.Parameters.AddWithValue("@TeacherId", NewTeacher.TeacherId);
+            cmd.Parameters.AddWithValue("@TeacherFname", NewTeacher.TeacherFname);
+            cmd.Parameters.AddWithValue("@TeacherLname", NewTeacher.TeacherLname);
+            cmd.Parameters.AddWithValue("@EmployeeNumber", NewTeacher.EmployeeNumber);
+            cmd.Parameters.AddWithValue("@HireDate", NewTeacher.HireDate);
+            cmd.Parameters.AddWithValue("@Salary", NewTeacher.Salary);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+
         }
     }
 }
