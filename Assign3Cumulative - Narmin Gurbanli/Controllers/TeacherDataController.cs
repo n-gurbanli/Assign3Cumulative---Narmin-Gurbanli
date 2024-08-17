@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -42,7 +43,7 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
                     string TeacherLname = ResultSet["teacherlname"].ToString();
                     string EmployeeNumber = ResultSet["employeenumber"].ToString();
                     DateTime HireDate = (DateTime)ResultSet["hiredate"];
-                    string Salary = ResultSet["salary"].ToString();
+                    decimal Salary = (decimal)ResultSet["salary"];
 
 
 
@@ -67,6 +68,16 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
             return Teachers;
 
         }
+
+        /// <summary>
+        /// Retrieves a teacher's details from the database based on the provided teacher ID.
+        /// </summary>
+        /// <param name="id">The id of the teacher being retrived</param>
+        /// <returns>
+        /// Return a web page containing the details of the teacher retrived.
+        /// </returns>
+        /// <example> GET: /api/TeacherData/FindTeacher/3 </example>
+
         [HttpGet]
         public Teacher FindTeacher(int id)
             //This shows each individual teacher
@@ -85,7 +96,7 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
                 string TeacherLname = ResultSet["teacherlname"].ToString();
                 string EmployeeNumber = ResultSet["employeenumber"].ToString();
                 DateTime HireDate = (DateTime)ResultSet["hiredate"];
-                string Salary = ResultSet["salary"].ToString();
+                decimal Salary = (decimal)ResultSet["salary"];
 
 
 
@@ -103,9 +114,10 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Deletes a teacher record from the database based on the provided teacher ID.
         /// </summary>
         /// <param name="id">The id of the teacher being deleted</param>
+        /// <return> This method does not return a value. </return>
         /// <example>POST : /api/TeacherData/DeleteTeacher/3</example>
 
         [HttpPost]
@@ -124,10 +136,19 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
             //dont need to return anything, as it is a void method
         }
 
+        /// <summary>
+        /// Adds a new teacher record to the database.
+        /// </summary>
+        /// <param name="NewTeacher">Object that contains the details of the new teacher to be added</param>
+        /// <example>POST: /api/TeacherData/AddTeacher</example>
+
         [HttpPost]
         public void AddTeacher([FromBody]Teacher NewTeacher)
         {
+            if (!NewTeacher.IsValid()) return;
+
             MySqlConnection Conn = school.AccessDatabase();
+            Debug.WriteLine(NewTeacher.TeacherFname);
             Conn.Open();
             MySqlCommand cmd = Conn.CreateCommand();
             cmd.CommandText = "Insert into teachers (teacherid, teacherfname, teacherlname, employeenumber, hiredate, salary) values (@TeacherId,@TeacherFname,@TeacherLname,@EmployeeNumber,@HireDate,@Salary)";
@@ -142,6 +163,26 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
             cmd.ExecuteNonQuery();
             Conn.Close();
 
+        }
+
+        public void UpdateTeacher(int id, [FromBody]Teacher TeacherInfo)
+        {
+            MySqlConnection Conn = school.AccessDatabase();
+            Debug.WriteLine(TeacherInfo.TeacherFname);
+            Conn.Open();
+            MySqlCommand cmd = Conn.CreateCommand();
+            cmd.CommandText = "Update teachers set teacherfname=@TeacherFname, teacherlname=@TeacherLname, employeenumber=@EmployeeNumber, hiredate=@HireDate, salary=@Salary where teacherid=@TeacherID";
+            cmd.Parameters.AddWithValue("@TeacherId", id);
+            cmd.Parameters.AddWithValue("@TeacherFname", TeacherInfo.TeacherFname);
+            cmd.Parameters.AddWithValue("@TeacherLname", TeacherInfo.TeacherLname);
+            cmd.Parameters.AddWithValue("@EmployeeNumber", TeacherInfo.EmployeeNumber);
+            cmd.Parameters.AddWithValue("@HireDate", TeacherInfo.HireDate);
+            cmd.Parameters.AddWithValue("@Salary", TeacherInfo.Salary);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
         }
     }
 }

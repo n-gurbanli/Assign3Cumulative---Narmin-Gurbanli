@@ -32,10 +32,10 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
         {
 
             TeacherDataController controller = new TeacherDataController();
-            Teacher NewTeacher = controller.FindTeacher(id);
-            //NewTeacher.TeacherFname = "Narmin";
-            //NewTeacher.TeacherLname = "Gurbanli";
-            return View(NewTeacher);
+            Teacher SelectedTeacher = controller.FindTeacher(id);
+            //SelectedTeacher.TeacherFname = "Narmin";
+            //SelectedTeacher.TeacherLname = "Gurbanli";
+            return View(SelectedTeacher);
         }
 
 
@@ -66,7 +66,7 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
 
         //POST : /Teacher/Create
         [HttpPost]
-        public ActionResult Create(string TeacherFname, string TeacherLname, string EmployeeNumber, DateTime HireDate, string Salary)
+        public ActionResult Create(string TeacherFname, string TeacherLname, string EmployeeNumber, DateTime HireDate, decimal Salary)
         {
             Debug.WriteLine("Hi there");
             Debug.WriteLine(TeacherFname);
@@ -87,6 +87,62 @@ namespace Assign3Cumulative___Narmin_Gurbanli.Controllers
 
             return RedirectToAction("List");
             
+        }
+
+
+        /// <summary>
+        /// Routes to "Teacher Update" page and gathers information from database
+        /// </summary>
+        /// <param name="id">ID of a teacher</param>
+        /// <returns>
+        /// Un "Update Teacher" webpage which provides current information of the teacher and also asks the
+        /// user for new information as part of the form
+        /// </returns>
+        /// <example> GET : /Teacher/Update/{id} </example>
+        public ActionResult Update(int id)
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher SelectedTeacher = controller.FindTeacher(id);
+            return View(SelectedTeacher);
+        }
+
+
+        /// <summary>
+        /// Receives a POST request containing information about existing teacher in the database with new values. 
+        /// Conveys this nformation to the API and redirects to "Teacher/Show" page of the updated teacher.
+        /// </summary>
+        /// <param name="id">id of the teacher to update</param>
+        /// <param name="TeacherFname">the uodated first name of the teacher</param>
+        /// <param name="TeacherLname">the updated last name of the teacher</param>
+        /// <param name="EmployeeNumber">the updated employee number of the teacher</param>
+        /// <param name="HireDate">the updated hire date of the teacher</param>
+        /// <param name="Salary">the updated salary of the teacher</param>
+        /// <returns>
+        /// A web page that shows the current information of the teacher
+        /// </returns>
+        /// <example> POST : /Teacher/Update/10
+        /// FORM DATA / POST DATA / REQUEST BODY
+        /// {
+        /// "TeacherFname":"Narmin" 
+        /// "TeacherLname":"Gurbanli"
+        /// "EmployeeNumber":"T123"
+        /// "HireDate":"01/01/2023"
+        /// "Salary":"100.00"
+        /// }
+        /// </example>
+        [HttpPost]
+        public ActionResult Update(int id, string TeacherFname, string TeacherLname, string EmployeeNumber, DateTime HireDate, decimal Salary)
+        {
+            Teacher TeacherInfo = new Teacher();
+            TeacherInfo.TeacherFname = TeacherFname;
+            TeacherInfo.TeacherLname = TeacherLname;
+            TeacherInfo.EmployeeNumber = EmployeeNumber;
+            TeacherInfo.HireDate = HireDate;
+            TeacherInfo.Salary = Salary;
+            TeacherDataController controller = new TeacherDataController();
+            controller.UpdateTeacher(id, TeacherInfo);
+
+            return RedirectToAction("Show/" + id);
         }
 
     }

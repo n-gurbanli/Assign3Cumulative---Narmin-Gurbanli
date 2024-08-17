@@ -1,0 +1,103 @@
+﻿@model Assign3Cumulative___Narmin_Gurbanli.Models.Teacher
+@{
+    ViewBag.Title = "Update";
+}
+
+<div id="containershow">
+    <nav>
+        <a class="navlink" href="/Teacher/Show/@Model.TeacherId">Back</a>
+    </nav>
+    <h2>Update Teacher</h2>
+    <form method="POST" action="/Teacher/Update/@Model.TeacherId" id="form">
+        <div>
+            <label for="TeacherFname">First Name:</label>
+            <input type="text" id="TeacherFname" name="TeacherFname" value="@Model.TeacherFname" />
+            <div id="errorF" style="color: red; display:none">Please enter teacher's first name</div>
+        </div>
+        <div>
+            <label for="TeacherLname">Last Name:</label>
+            <input type="text" id="TeacherLname" name="TeacherLname" value="@Model.TeacherLname" />
+            <div id="errorL" style="color: red; display:none">Please enter teacher's last name</div>
+        </div>
+        <div>
+            <label for="EmployeeNumber">Employee Number:</label>
+            <input type="text" id="EmployeeNumber" name="EmployeeNumber" value="@Model.EmployeeNumber" />
+            <div id="errorE" style="color: red; display:none">Please enter teacher's employee numbere</div>
+        </div>
+        <div>
+            <label for="HireDate">Hire Date:</label>
+            <input type="date" id="HireDate" name="HireDate" value="@Model.HireDate.ToString("yyyy-MM-dd")" />
+            <div id="errorH" style="color: red; display:none">Please enter teacher's hire date</div>
+        </div>
+        <div>
+            <label for="Salary">Salary:</label>
+            <input type="text" id="Salary" min="0" value="@Model.Salary" step=".01" name="Salary" asp-for="Salary" />
+            <div id="errorS" style="color: red; display:none">Please enter teacher's salary</div>
+        </div>
+        <div>
+            <input type="submit" value="Update Teacher" />
+        </div>
+    </form>
+</div>
+
+<script>
+    function validateFormFields() {
+        var firstName = document.getElementById("TeacherFname").value;
+        var lastName = document.getElementById("TeacherLname").value;
+        var employeeNumber = document.getElementById("EmployeeNumber").value;
+        var hireDate = document.getElementById("HireDate").value;
+        var salary = document.getElementById("Salary").value;
+        var errorFirstName = document.getElementById("errorF");
+        var errorLastName = document.getElementById("errorL");
+        var errorEmployeeNumber = document.getElementById("errorE");
+        var errorHireDate = document.getElementById("errorH");
+        var errorSalary = document.getElementById("errorS");
+        var valid = true;
+
+        // Reset error messages
+        errorFirstName.style.display = "none";
+        errorLastName.style.display = "none";
+        errorEmployeeNumber.style.display = "none";
+        errorHireDate.style.display = "none";
+        errorSalary.style.display = "none";
+
+
+
+
+        // Validation
+
+        if (firstName === '') {
+            errorFirstName.style.display = "block";
+            valid = false;
+        }
+        if (lastName === '') {
+            errorLastName.style.display = "block";
+            valid = false;
+        }
+        if (employeeNumber === '') {
+            errorEmployeeNumber.style.display = "block";
+            valid = false;
+        }
+        if (hireDate === '') {
+            errorHireDate.style.display = "block";
+            valid = false;
+        }
+        if (isNaN(salary) || salary <= 0) {
+            errorSalary.style.display = "block";
+            valid = false;
+        }
+
+        return valid;
+
+    }
+
+
+    document.querySelector("form").onsubmit = function (event) {
+        var formIsValid = validateFormFields();
+
+        if (!formIsValid) {
+            event.preventDefault();
+        }
+    }
+</script>
+
